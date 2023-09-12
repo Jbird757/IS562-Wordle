@@ -12,11 +12,23 @@ from WordleGraphics import WordleGWindow, N_COLS, N_ROWS
 
 def wordle():
 
+
+
     def enter_action(s):
         gw.show_message("You have to implement this method.")
 
     gw = WordleGWindow()
+
     gw.add_enter_listener(enter_action)
+
+    #Gets random index and sets a random word using that index
+    index = random.randint(0, len(FIVE_LETTER_WORDS))
+    randWord = FIVE_LETTER_WORDS[index]
+
+    #Displays random word on the first line (remove later)
+    for i in range(0, N_COLS):
+        gw.set_square_letter(0, i, randWord[i])
+
 
 # Startup code
 

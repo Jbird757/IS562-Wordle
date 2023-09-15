@@ -13,10 +13,33 @@ from WordleGraphics import WordleGWindow, N_COLS, N_ROWS
 def wordle():
 
     def enter_action(s):
-        gw.show_message("You have to implement this method.")
+        if s.lower() == randWord:
+            gw.show_message("Correct!")
+
+        elif s.lower() in FIVE_LETTER_WORDS:
+            gw.show_message("This is a word")
+
+            if gw.get_current_row() < N_ROWS:
+                gw.set_current_row(gw.get_current_row() + 1)
+            else:
+                gw.show_message("You lose")
+
+        else:
+            gw.show_message("This is not a word")
+            gw.set_current_row(gw.get_current_row())
 
     gw = WordleGWindow()
+
     gw.add_enter_listener(enter_action)
+
+    #Gets random index and sets a random word using that index
+    index = random.randint(0, len(FIVE_LETTER_WORDS))
+    randWord = FIVE_LETTER_WORDS[index]
+
+    #Displays random word on the first line (remove later)
+    for i in range(0, N_COLS):
+        gw.set_square_letter(0, i, randWord[i])
+
 
 # Startup code
 

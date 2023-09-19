@@ -22,7 +22,7 @@ UNKNOWN_COLOR = "#FFFFFF"       # Undetermined letters are white
 KEY_COLOR = "#DDDDDD"           # Keys are colored light gray
 
 CANVAS_WIDTH = 500		# Width of the tkinter canvas (pixels)
-CANVAS_HEIGHT = 700		# Height of the tkinter canvas (pixels)
+CANVAS_HEIGHT = 800		# Height of the tkinter canvas (pixels)
 
 SQUARE_SIZE = 60		# Size of each square (pixels)
 SQUARE_SEP = 5                  # Separation between squares (pixels)
@@ -75,7 +75,7 @@ class WordleGWindow:
             keys = { }
             nk = len(KEY_LABELS[0])
             h = KEY_HEIGHT
-            y0 = CANVAS_HEIGHT - BOTTOM_MARGIN - 3 * KEY_HEIGHT - 2 * KEY_YSEP
+            y0 = (CANVAS_HEIGHT - 100) - BOTTOM_MARGIN - 3 * KEY_HEIGHT - 2 * KEY_YSEP
             for row in range(len(KEY_LABELS)):
                 y = y0 + row * (KEY_HEIGHT + KEY_YSEP)
                 x = (CANVAS_WIDTH - nk * KEY_WIDTH - (nk - 1) * KEY_XSEP) / 2
@@ -169,6 +169,12 @@ class WordleGWindow:
         root.bind("<ButtonRelease-1>", release_action)
         self._row = 0
         self._col = 0
+        self.switch_state = False
+        self.label = tkinter.Label(self._canvas, text="Alternate Colors", font=("Helvetica Neue", -14))
+        self.label.place(x=CANVAS_WIDTH / 2, y=CANVAS_HEIGHT - 90, anchor=tkinter.CENTER)
+        self.switch = tkinter.Button(self._canvas, text="OFF", bg="red", fg="white", font=("Helvetica Neue", -18))
+        self.switch.bind(1, self.toggle_switch)
+        self.switch.place(x=CANVAS_WIDTH / 2, y=CANVAS_HEIGHT - 60, anchor=tkinter.CENTER)
         atexit.register(start_event_loop)
 
     def get_square_letter(self, row, col):
@@ -204,6 +210,36 @@ class WordleGWindow:
 
     def show_message(self, msg, color="Black"):
         self._message.set_text(msg, color)
+
+    def toggle_switch(self, event):
+        # Toggle the switch state
+        self.switch_state = not self.switch_state
+        
+        # Update the switch appearance
+        # if self.switch_state:
+        #     self.switch.config(text="ON", bg="green")
+        #     global CORRECT_COLOR
+        #     CORRECT_COLOR = "#00D6F4" 
+        #     global PRESENT_COLOR 
+        #     PRESENT_COLOR = "#F46A00"
+        #     global MISSING_COLOR
+        #     MISSING_COLOR = "#FFFFFF"       
+        #     global UNKNOWN_COLOR
+        #     UNKNOWN_COLOR= "#D77B7A"       
+        #     global KEY_COLOR
+        #     KEY_COLOR = "#D6D596"           
+        # else:
+        #     self.switch.config(text="OFF", bg="red")
+        #     global CORRECT_COLOR            
+        #     CORRECT_COLOR = "#66BB66"       # Light green for correct letters
+        #     global PRESENT_COLOR 
+        #     PRESENT_COLOR = "#CCBB66"       # Brownish yellow for misplaced letters
+        #     global MISSING_COLOR
+        #     MISSING_COLOR = "#999999"       # Gray for letters that don't appear
+        #     global UNKNOWN_COLOR
+        #     UNKNOWN_COLOR= "#FFFFFF"        # Undetermined letters are white
+        #     global KEY_COLOR
+        #     KEY_COLOR = "#DDDDDD"           # Keys are colored light gray
 
 
 class WordleSquare:

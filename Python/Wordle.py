@@ -75,8 +75,8 @@ def wordle():
     randWord = FIVE_LETTER_WORDS[index]
 
     #Displays random word on the first line (remove later)
-    for i in range(0, N_COLS):
-        gw.set_square_letter(0, i, randWord[i])
+    # for i in range(0, N_COLS):
+    #     gw.set_square_letter(0, i, randWord[i])
 
 
 # Startup code

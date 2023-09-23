@@ -56,6 +56,10 @@ def wordle():
             gw.show_message("That is not a word")
             gw.set_current_row(gw.get_current_row())
 
+        if gw.switch_state:
+            gw.toggle_switch()
+            gw.toggle_switch()
+
     def getPos(guessWord, index, actualPos):
         for i in range(0, 5):
             if randWord[i] == guessWord[index]:

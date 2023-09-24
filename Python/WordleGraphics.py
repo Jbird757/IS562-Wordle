@@ -22,7 +22,7 @@ UNKNOWN_COLOR = "#FFFFFF"       # Undetermined letters are white
 KEY_COLOR = "#DDDDDD"           # Keys are colored light gray
 
 CANVAS_WIDTH = 500		# Width of the tkinter canvas (pixels)
-CANVAS_HEIGHT = 700		# Height of the tkinter canvas (pixels)
+CANVAS_HEIGHT = 800		# Height of the tkinter canvas (pixels)
 
 SQUARE_SIZE = 60		# Size of each square (pixels)
 SQUARE_SEP = 5                  # Separation between squares (pixels)
@@ -75,7 +75,7 @@ class WordleGWindow:
             keys = { }
             nk = len(KEY_LABELS[0])
             h = KEY_HEIGHT
-            y0 = CANVAS_HEIGHT - BOTTOM_MARGIN - 3 * KEY_HEIGHT - 2 * KEY_YSEP
+            y0 = (CANVAS_HEIGHT - 100) - BOTTOM_MARGIN - 3 * KEY_HEIGHT - 2 * KEY_YSEP
             for row in range(len(KEY_LABELS)):
                 y = y0 + row * (KEY_HEIGHT + KEY_YSEP)
                 x = (CANVAS_WIDTH - nk * KEY_WIDTH - (nk - 1) * KEY_XSEP) / 2
@@ -110,7 +110,7 @@ class WordleGWindow:
                 self.show_message("")
                 s = ""
                 for col in range(N_COLS):
-                    s += self._grid[self._row][col].get_letter();
+                    s += self._grid[self._row][col].get_letter()
                 for fn in self._enter_listeners:
                     fn(s)
             elif ch.isalpha():
@@ -169,7 +169,22 @@ class WordleGWindow:
         root.bind("<ButtonRelease-1>", release_action)
         self._row = 0
         self._col = 0
+        self.switch_state = False
+        self.initialize_colors()
+        self.label = tkinter.Label(self._canvas, text="Alternate Colors", font=("Helvetica Neue", -14))
+        self.label.place(x=CANVAS_WIDTH / 2, y=CANVAS_HEIGHT - 90, anchor=tkinter.CENTER)
+        self.switch = tkinter.Button(self._canvas, text="OFF", bg="red", fg="white", font=("Helvetica Neue", -18))
+        self.switch.config(command=self.toggle_switch)
+        self.switch.place(x=CANVAS_WIDTH / 2, y=CANVAS_HEIGHT - 60, anchor=tkinter.CENTER)
         atexit.register(start_event_loop)
+
+    def initialize_colors(self):
+        global CORRECT_COLOR, PRESENT_COLOR, MISSING_COLOR, UNKNOWN_COLOR, KEY_COLOR
+        CORRECT_COLOR = "#66BB66"  # Light green for correct letters
+        PRESENT_COLOR = "#CCBB66"  # Brownish yellow for misplaced letters
+        MISSING_COLOR = "#999999"  # Gray for letters that don't appear
+        UNKNOWN_COLOR = "#FFFFFF"  # Undetermined letters are white
+        KEY_COLOR = "#DDDDDD"      # Keys are colored light gray
 
     def get_square_letter(self, row, col):
         return self._grid[row][col].get_letter()
@@ -205,6 +220,55 @@ class WordleGWindow:
     def show_message(self, msg, color="Black"):
         self._message.set_text(msg, color)
 
+    def toggle_switch(self):
+        # Toggle the switch state
+        global CORRECT_COLOR, PRESENT_COLOR, MISSING_COLOR, UNKNOWN_COLOR, KEY_COLOR
+        self.switch_state = not self.switch_state
+        old_correct_color = CORRECT_COLOR
+        old_present_color = PRESENT_COLOR
+        old_missing_color = MISSING_COLOR
+        old_unknown_color = UNKNOWN_COLOR
+        old_key_color = KEY_COLOR
+        
+        # Update the switch appearance
+        if self.switch_state:
+            self.switch.config(text="ON", bg="green")
+            CORRECT_COLOR = "#00D6F4" 
+            PRESENT_COLOR = "#F46A00"
+            MISSING_COLOR = "#000000"       
+            UNKNOWN_COLOR= "#D77B7A"       
+            KEY_COLOR = "#D6D596" 
+          
+        else:
+            self.switch.config(text="OFF", bg="red")            
+            self.initialize_colors()
+
+        # Update the colors of the squares
+        for row in range(N_ROWS):
+            for col in range(N_COLS):
+                current_color = self.get_square_color(row, col)
+                if current_color == old_correct_color:
+                    self.set_square_color(row, col, CORRECT_COLOR)
+                elif current_color == old_present_color:
+                    self.set_square_color(row, col, PRESENT_COLOR)
+                elif current_color == old_missing_color:
+                    self.set_square_color(row, col, MISSING_COLOR)
+                elif current_color == old_unknown_color:
+                    self.set_square_color(row, col, UNKNOWN_COLOR)
+
+        # Update the colors of the keys
+        for row in KEY_LABELS:
+            for key_label in row:
+                current_color = self.get_key_color(key_label)
+                if current_color == old_key_color:
+                    self.set_key_color(key_label, KEY_COLOR)
+                elif current_color == old_correct_color:
+                    self.set_key_color(key_label, CORRECT_COLOR)
+                elif current_color == old_present_color:
+                    self.set_key_color(key_label, PRESENT_COLOR)
+                elif current_color == old_missing_color:
+                    self.set_key_color(key_label, MISSING_COLOR)
+
 
 class WordleSquare:
 
@@ -215,7 +279,7 @@ class WordleSquare:
         y1 = y0 + SQUARE_SIZE
         self._canvas = canvas
         self._ch = " "
-        self._color = UNKNOWN_COLOR;
+        self._color = UNKNOWN_COLOR
         self._frame = canvas.create_rectangle(x0, y0, x1, y1)
         self._text = canvas.create_text(x0 + SQUARE_SIZE / 2,
                                         y0 + SQUARE_SIZE / 2,
